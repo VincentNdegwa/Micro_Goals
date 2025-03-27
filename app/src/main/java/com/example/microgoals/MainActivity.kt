@@ -5,8 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -19,6 +18,8 @@ import com.example.microgoals.navigation.Screen
 import com.example.microgoals.ui.goals.GoalListScreen
 import com.example.microgoals.ui.goals.AddEditGoalScreen
 import com.example.microgoals.ui.statistics.StatisticsScreen
+import androidx.compose.ui.res.painterResource
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,13 +46,13 @@ fun MainScreen() {
                 NavigationBarItem(
                     selected = navController.currentDestination?.route == Screen.GoalList.route,
                     onClick = { navController.navigate(Screen.GoalList.route) },
-                    icon = { Icon(Icons.Default.List, contentDescription = "Goals") },
+                    icon = { Icon(Icons.Default.Home, contentDescription = "Goals") },
                     label = { Text("Goals") }
                 )
                 NavigationBarItem(
                     selected = navController.currentDestination?.route == Screen.Statistics.route,
                     onClick = { navController.navigate(Screen.Statistics.route) },
-                    icon = { Icon(Icons.Default.Menu, contentDescription = "Statistics") },
+                    icon = { Icon(painterResource(R.drawable.baseline_show_chart_24), contentDescription = "Statistics") },
                     label = { Text("Statistics") }
                 )
             }

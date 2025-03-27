@@ -13,12 +13,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.microgoals.data.model.Goal
 import com.example.microgoals.data.model.GoalCategory
 import com.example.microgoals.data.local.GoalDatabase
+import com.example.microgoals.data.model.GoalFrequency
 import com.example.microgoals.ui.viewmodel.GoalsViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -102,29 +105,100 @@ fun GoalItem(
 ) {
     ElevatedCard(
         onClick = onGoalClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .shadow(4.dp, shape = MaterialTheme.shapes.medium),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth()
         ) {
-            Column {
-                Text(
-                    text = goal.title,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = "Streak: ${goal.currentStreak} days",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            IconButton(onClick = onCompleteClick) {
-                Icon(
-                    Icons.Default.Check,
-                    contentDescription = "Complete Goal"
-                )
+            Text(
+                text = goal.title,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            when (goal.frequency) {
+                GoalFrequency.ONE_TIME -> {
+                    LinearProgressIndicator(
+                        progress = goal.progressPercentage / 100f,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp)
+                            .clip(MaterialTheme.shapes.small),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Text(
+                        text = "Progress: ${goal.progressPercentage}%",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    if (goal.isCompleted) {
+                        Text(
+                            text = "✅ Completed",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.secondary
+                            ),
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    } else {
+                        IconButton(onClick = onCompleteClick) {
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = "Complete Goal",
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                    }
+                }
+                GoalFrequency.DAILY -> {
+                    Text(
+                        text = "🔥 Streak: ${goal.currentStreak} Days",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+                GoalFrequency.CUSTOM -> {
+                    LinearProgressIndicator(
+                        progress = goal.totalCompletions.toFloat() / (goal.targetCompletions ?: 1),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp)
+                            .clip(MaterialTheme.shapes.small),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Text(
+                        text = "Progress: ${goal.totalCompletions}/${goal.targetCompletions}",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    if (goal.currentStreak > 0) {
+                        Text(
+                            text = "🔥 Streak: ${goal.currentStreak} Days",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            ),
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+                else -> {
+                    // Handle other goal frequencies if needed
+                }
             }
         }
     }
