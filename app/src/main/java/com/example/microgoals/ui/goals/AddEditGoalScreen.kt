@@ -82,7 +82,11 @@ fun AddEditGoalScreen(
                 value = title,
                 onValueChange = { title = it },
                 label = { Text("Title") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -97,7 +101,11 @@ fun AddEditGoalScreen(
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Goal Type") },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                    )
                 )
                 ExposedDropdownMenu(
                     expanded = expandedGoalType,
@@ -127,7 +135,11 @@ fun AddEditGoalScreen(
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Category") },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                    )
                 )
                 ExposedDropdownMenu(
                     expanded = expandedCategory,
@@ -152,7 +164,11 @@ fun AddEditGoalScreen(
                 value = targetValue,
                 onValueChange = { targetValue = it },
                 label = { Text("Target Value") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -167,7 +183,11 @@ fun AddEditGoalScreen(
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Frequency") },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                    )
                 )
                 ExposedDropdownMenu(
                     expanded = expandedFrequency,
@@ -197,7 +217,11 @@ fun AddEditGoalScreen(
                     Text("Mark as Completed")
                     Checkbox(
                         checked = isCompleted,
-                        onCheckedChange = { isCompleted = it }
+                        onCheckedChange = { isCompleted = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MaterialTheme.colorScheme.primary,
+                            uncheckedColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
                 }
             }
@@ -213,7 +237,11 @@ fun AddEditGoalScreen(
                     Text("Auto-completable")
                     Switch(
                         checked = isAutoCompletable,
-                        onCheckedChange = { isAutoCompletable = it }
+                        onCheckedChange = { isAutoCompletable = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.primary,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
                 }
 
@@ -224,14 +252,17 @@ fun AddEditGoalScreen(
                         value = customDaysInterval,
                         onValueChange = { customDaysInterval = it },
                         label = { Text("Custom Interval (Days)") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
 
                     // Days of Week Selection (implement if needed)
                     // Add your implementation for days of week selection here
                 }
             }
-
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -241,7 +272,11 @@ fun AddEditGoalScreen(
                 onValueChange = { description = it },
                 label = { Text("Description (Optional)") },
                 modifier = Modifier.fillMaxWidth().height(100.dp),
-                maxLines = 4
+                maxLines = 4,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                )
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -267,7 +302,10 @@ fun AddEditGoalScreen(
                     onNavigateBack()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = title.isNotBlank()
+                enabled = title.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 Text(if (goalId == -1L) "Add Goal" else "Update Goal")
             }

@@ -64,9 +64,10 @@ fun GoalListScreen(
             onClick = onAddGoal,
             modifier = Modifier
                 .padding(16.dp)
-                .align(Alignment.End)
+                .align(Alignment.End),
+            containerColor = MaterialTheme.colorScheme.primary
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Add Goal")
+            Icon(Icons.Default.Add, contentDescription = "Add Goal", tint = MaterialTheme.colorScheme.onPrimary)
         }
     }
 }
@@ -110,7 +111,7 @@ fun GoalItem(
             .padding(vertical = 8.dp)
             .shadow(4.dp, shape = MaterialTheme.shapes.medium),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(
@@ -121,7 +122,7 @@ fun GoalItem(
             Text(
                 text = goal.title,
                 style = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onSurface
                 ),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -139,7 +140,7 @@ fun GoalItem(
                     Text(
                         text = "Progress: ${goal.progressPercentage}%",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onSurface
                         ),
                         modifier = Modifier.padding(top = 4.dp)
                     )
@@ -165,7 +166,7 @@ fun GoalItem(
                     Text(
                         text = "🔥 Streak: ${goal.currentStreak} Days",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onSurface
                         ),
                         modifier = Modifier.padding(top = 4.dp)
                     )
@@ -182,7 +183,7 @@ fun GoalItem(
                     Text(
                         text = "Progress: ${goal.totalCompletions}/${goal.targetCompletions}",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onSurface
                         ),
                         modifier = Modifier.padding(top = 4.dp)
                     )
@@ -190,7 +191,7 @@ fun GoalItem(
                         Text(
                             text = "🔥 Streak: ${goal.currentStreak} Days",
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                                color = MaterialTheme.colorScheme.onSurface
                             ),
                             modifier = Modifier.padding(top = 4.dp)
                         )
