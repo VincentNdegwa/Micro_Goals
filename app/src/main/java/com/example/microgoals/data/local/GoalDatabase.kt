@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.microgoals.data.model.Goal
 
-@Database(entities = [Goal::class], version = 1)
+@Database(entities = [Goal::class], version = 2)
 @TypeConverters(Converters::class)
 abstract class GoalDatabase : RoomDatabase() {
     abstract fun goalDao(): GoalDao
@@ -22,7 +22,7 @@ abstract class GoalDatabase : RoomDatabase() {
                     context.applicationContext,
                     GoalDatabase::class.java,
                     "goal_database"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }

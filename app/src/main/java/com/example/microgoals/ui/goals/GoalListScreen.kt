@@ -1,5 +1,7 @@
 package com.example.microgoals.ui.goals
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,6 +21,7 @@ import com.example.microgoals.data.model.GoalCategory
 import com.example.microgoals.data.local.GoalDatabase
 import com.example.microgoals.ui.viewmodel.GoalsViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GoalListScreen(
     onAddGoal: () -> Unit,
