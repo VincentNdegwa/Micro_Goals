@@ -13,7 +13,7 @@ interface GoalDao {
     @Query("SELECT * FROM goals WHERE category = :category ORDER BY createdAt DESC")
     fun getGoalsByCategory(category: GoalCategory): Flow<List<Goal>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGoal(goal: Goal)
 
     @Update

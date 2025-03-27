@@ -122,8 +122,9 @@ fun AddEditGoalScreen(
 
         Button(
             onClick = {
+                // If goalId is -1, we set id to 0 so that Room auto-generates a new ID.
                 val goal = Goal(
-                    id = goalId,
+                    id = if (goalId == -1L) 0 else goalId,
                     title = title,
                     category = category,
                     isAutoCompletable = isAutoCompletable,
