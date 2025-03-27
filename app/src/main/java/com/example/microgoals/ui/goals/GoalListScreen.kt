@@ -81,7 +81,7 @@ fun CategoryChips(
                 label = { Text("All") }
             )
         }
-        items(GoalCategory.values()) { category ->
+        items(GoalCategory.entries.toTypedArray()) { category ->
             FilterChip(
                 selected = category == selectedCategory,
                 onClick = { onCategorySelected(category) },

@@ -1,5 +1,7 @@
 package com.example.microgoals.ui.viewmodel
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,8 +24,8 @@ class GoalsViewModel(
     private val _selectedCategory = MutableStateFlow<GoalCategory?>(null)
     val selectedCategory: StateFlow<GoalCategory?> get() = _selectedCategory
 
-    private val _goal = MutableLiveData<Goal>()
-    val goal: LiveData<Goal> get() = _goal
+    private val _goal = MutableStateFlow<Goal?>(null)
+    val goal: StateFlow<Goal?> get() = _goal
 
     init {
         loadGoals()
@@ -47,7 +49,7 @@ class GoalsViewModel(
             val flow = if (category == null) {
                 goalDao.getAllGoals()
             } else {
-                goalDao.getGoalsByCategory(category.name)
+                goalDao.getGoalsByCategory(category)
             }
             flow.collect { goalsList ->
                 _goals.value = goalsList
@@ -58,34 +60,40 @@ class GoalsViewModel(
     fun addGoal(goal: Goal) {
         viewModelScope.launch {
             goalDao.insertGoal(goal)
-            loadGoals()
         }
     }
 
-    fun editGoal(updatedGoal: Goal) {
+    fun updateGoal(goal: Goal) {
         viewModelScope.launch {
-            goalDao.updateGoal(updatedGoal)
-            loadGoals()
+            goalDao.updateGoal(goal)
         }
     }
 
     fun deleteGoal(goal: Goal) {
         viewModelScope.launch {
             goalDao.deleteGoal(goal)
-            loadGoals()
         }
     }
 
+    fun getGoalById(id: Long) {
+        viewModelScope.launch {
+            goalDao.getGoalById(id).collect { loadedGoal ->
+                _goal.value = loadedGoal
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun completeGoal(goal: Goal) {
         viewModelScope.launch {
-            val updatedGoal = goal.copy(isCompleted = true)
+            val updatedGoal = goal.copy(
+                isCompleted = !goal.isCompleted,
+                lastCompletedAt = if (!goal.isCompleted) java.time.LocalDateTime.now() else goal.lastCompletedAt,
+                currentStreak = if (!goal.isCompleted) goal.currentStreak + 1 else goal.currentStreak,
+                bestStreak = if (!goal.isCompleted) maxOf(goal.currentStreak + 1, goal.bestStreak) else goal.bestStreak
+            )
             goalDao.updateGoal(updatedGoal)
-            loadGoals()
         }
-    }
-
-    suspend fun getGoal(goalId: Long): Goal? {
-        return goalDao.getGoalById(goalId)
     }
 
     // Factory for creating the ViewModel

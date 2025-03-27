@@ -3,6 +3,7 @@ package com.example.microgoals.ui.goals
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -28,14 +29,23 @@ fun AddEditGoalScreen(
     var category by remember { mutableStateOf(GoalCategory.OTHER) }
     var isAutoCompletable by remember { mutableStateOf(false) }
     var description by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+
+    val existingGoal by viewModel.goal.collectAsState()
 
     LaunchedEffect(goalId) {
         if (goalId != -1L) {
-            viewModel.getGoal(goalId)?.let { goal ->
-                title = goal.title
-                category = goal.category
-                isAutoCompletable = goal.isAutoCompletable
-            }
+            viewModel.getGoalById(goalId)
+        }
+    }
+
+    // Update the UI when the goal is loaded
+    LaunchedEffect(existingGoal) {
+        existingGoal?.let { goal ->
+            title = goal.title
+            category = goal.category
+            isAutoCompletable = goal.isAutoCompletable
+            description = goal.description ?: ""
         }
     }
 
@@ -47,31 +57,36 @@ fun AddEditGoalScreen(
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
-            label = { Text("Goal Title") },
+            label = { Text("Title") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         ExposedDropdownMenuBox(
-            expanded = false,
-            onExpandedChange = { },
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
         ) {
             OutlinedTextField(
                 value = category.name,
                 onValueChange = { },
                 readOnly = true,
                 label = { Text("Category") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor()
             )
             ExposedDropdownMenu(
-                expanded = false,
-                onDismissRequest = { }
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
             ) {
-                GoalCategory.values().forEach { category ->
+                GoalCategory.entries.forEach {
                     DropdownMenuItem(
-                        text = { Text(category.name) },
-                        onClick = { }
+                        text = { Text(it.name) },
+                        onClick = {
+                            category = it
+                            expanded = false
+                        }
                     )
                 }
             }
@@ -79,8 +94,21 @@ fun AddEditGoalScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text("Description") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp),
+            maxLines = 5
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Auto-completable")
@@ -90,32 +118,28 @@ fun AddEditGoalScreen(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Description") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                viewModel.editGoal(
-                    Goal(
-                        id = goalId,
-                        title = title,
-                        category = category,
-                        isAutoCompletable = isAutoCompletable
-                    )
+                val goal = Goal(
+                    id = goalId,
+                    title = title,
+                    category = category,
+                    isAutoCompletable = isAutoCompletable,
+                    description = description.takeIf { it.isNotBlank() }
                 )
+                if (goalId == -1L) {
+                    viewModel.addGoal(goal)
+                } else {
+                    viewModel.updateGoal(goal)
+                }
                 onNavigateBack()
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = title.isNotBlank()
         ) {
             Text(if (goalId == -1L) "Add Goal" else "Update Goal")
         }
     }
-} 
+}
