@@ -6,4 +6,6 @@ sealed class Screen(val route: String) {
         fun createRoute(goalId: Long = -1L) = "goal/$goalId"
     }
     object Statistics : Screen("statistics")
+    object AuthLogin: Screen("login")
+    object Settings: Screen("settings")
 } 
