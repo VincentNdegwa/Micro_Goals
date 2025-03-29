@@ -3,7 +3,14 @@ package com.example.microgoals.presentation.sign_in
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.microgoals.R
+import com.example.microgoals.data.local.GoalDatabase
+import com.example.microgoals.data.local.UserDao
+import com.example.microgoals.data.model.User
+import com.example.microgoals.ui.viewmodel.UserViewModel
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -15,15 +22,18 @@ import kotlinx.coroutines.tasks.await
 
 class GoogleAuthUiClient(
     private val context: Context,
-    private val oneTapClient: SignInClient
+    private val oneTapClient: SignInClient,
+    private val userViewModel: UserViewModel
 ) {
     private val auth = Firebase.auth
+    val database = GoalDatabase.getDatabase(context)
 
     suspend fun signIn(): IntentSender? {
         val result = try {
             oneTapClient.beginSignIn(
                 buildSignInRequest()
             ).await()
+
         } catch(e: Exception) {
             e.printStackTrace()
             if(e is CancellationException) throw e
@@ -40,10 +50,12 @@ class GoogleAuthUiClient(
             val user = auth.signInWithCredential(googleCredentials).await().user
             SignInResult(
                 data = user?.run {
-                    UserData(
+                    User(
                         userId = uid,
                         username = displayName,
-                        profilePictureUrl = photoUrl?.toString()
+                        profilePictureUrl = photoUrl?.toString(),
+                        email = email,
+                        isCurrentUser = true
                     )
                 },
                 errorMessage = null
@@ -68,11 +80,13 @@ class GoogleAuthUiClient(
         }
     }
 
-    fun getSignedInUser(): UserData? = auth.currentUser?.run {
-        UserData(
+    fun getSignedInUser(): User? = auth.currentUser?.run {
+        User(
             userId = uid,
             username = displayName,
-            profilePictureUrl = photoUrl?.toString()
+            profilePictureUrl = photoUrl?.toString(),
+            email = email,
+            isCurrentUser = true
         )
     }
 

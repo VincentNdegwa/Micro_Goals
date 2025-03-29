@@ -20,26 +20,42 @@ import com.example.microgoals.ui.goals.GoalListScreen
 import com.example.microgoals.ui.goals.AddEditGoalScreen
 import com.example.microgoals.ui.statistics.StatisticsScreen
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.microgoals.data.local.GoalDatabase
 import com.example.microgoals.presentation.sign_in.GoogleAuthUiClient
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.FirebaseApp
 import com.example.microgoals.ui.auth.AuthLoginScreen
 import com.example.microgoals.ui.settings.SettingsScreen
+import com.example.microgoals.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
+import androidx.compose.ui.platform.LocalContext
+import com.example.microgoals.data.model.User
 
 class MainActivity : ComponentActivity() {
-    private val googleAuthClient by lazy {
-        GoogleAuthUiClient(context = this, oneTapClient = Identity.getSignInClient(this))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
         setContent {
-            var isUserLoggedIn by remember { mutableStateOf(googleAuthClient.getSignedInUser() != null) }
+            val context = LocalContext.current
+            val database = GoalDatabase.getDatabase(context)
+            val userViewModel: UserViewModel = viewModel(
+                factory = UserViewModel.Factory(userDao = database.userDao())
+            )
 
-            if (isUserLoggedIn) {
+            val googleAuthClient = remember {
+                GoogleAuthUiClient(
+                    context = this,
+                    oneTapClient = Identity.getSignInClient(this),
+                    userViewModel = userViewModel
+                )
+            }
+            val loggedInUser: User? = googleAuthClient.getSignedInUser()
+            var isUserLoggedIn by remember { mutableStateOf(loggedInUser != null) }
+
+            if (isUserLoggedIn && loggedInUser!=null) {
                 val coroutineScope = rememberCoroutineScope()
+                userViewModel.insertUser(loggedInUser)
                 MainScreen(
                     googleAuthClient = googleAuthClient,
                     onLogout = {

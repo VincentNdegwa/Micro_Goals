@@ -6,11 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.microgoals.data.model.Goal
+import com.example.microgoals.data.model.User
 
-@Database(entities = [Goal::class], version = 2)
+@Database(entities = [Goal::class, User::class], version = 5)
 @TypeConverters(Converters::class)
 abstract class GoalDatabase : RoomDatabase() {
     abstract fun goalDao(): GoalDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
@@ -28,4 +30,4 @@ abstract class GoalDatabase : RoomDatabase() {
             }
         }
     }
-} 
+}

@@ -8,7 +8,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.microgoals.presentation.sign_in.GoogleAuthUiClient
-import com.example.microgoals.presentation.sign_in.UserData
 import kotlinx.coroutines.launch
 
 @Composable

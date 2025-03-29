@@ -9,12 +9,13 @@ import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-@Entity(tableName = "goals")
+@Entity(tableName = "goals", foreignKeys = [ForeignKey(entity = User::class,["userId"], ["userId"])])
 @TypeConverters(Converters::class)
 data class Goal(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val title: String,
+    val userId:String,
     val description: String? = null,
     val category: GoalCategory, // Enum: FITNESS, LEARNING, WORK, etc.
     val goalType: GoalType = GoalType.PERSONAL, // PERSONAL or SHARED

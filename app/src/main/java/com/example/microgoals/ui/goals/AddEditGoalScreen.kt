@@ -15,7 +15,9 @@ import com.example.microgoals.data.model.GoalCategory
 import com.example.microgoals.data.local.GoalDatabase
 import com.example.microgoals.data.model.GoalFrequency
 import com.example.microgoals.data.model.GoalType
+import com.example.microgoals.data.model.User
 import com.example.microgoals.ui.viewmodel.GoalsViewModel
+import com.example.microgoals.ui.viewmodel.UserViewModel
 import java.time.DayOfWeek
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,6 +30,9 @@ fun AddEditGoalScreen(
     val database = GoalDatabase.getDatabase(context)
     val viewModel: GoalsViewModel = viewModel(
         factory = GoalsViewModel.Factory(database.goalDao())
+    )
+    val userViewModel :UserViewModel= viewModel(
+        factory = UserViewModel.Factory(database.userDao())
     )
 
     var title by remember { mutableStateOf("") }
@@ -47,6 +52,7 @@ fun AddEditGoalScreen(
 
     val existingGoal by viewModel.goal.collectAsState()
     val scrollState = rememberScrollState()
+    val user: User? = userViewModel.getActiveUser()
 
     LaunchedEffect(goalId) {
         if (goalId != -1L) {
@@ -284,22 +290,25 @@ fun AddEditGoalScreen(
             // Save Button
             Button(
                 onClick = {
-                    val goal = Goal(
-                        id = if (goalId == -1L) 0 else goalId,
-                        title = title,
-                        category = category,
-                        goalType = goalType,
-                        frequency = if (isOneTime) GoalFrequency.ONE_TIME else frequency,
-                        isAutoCompletable = isAutoCompletable,
-                        description = description.takeIf { it.isNotBlank() },
-                        isCompleted = isCompleted
-                    )
-                    if (goalId == -1L) {
-                        viewModel.addGoal(goal)
-                    } else {
-                        viewModel.updateGoal(goal)
+                    if (user != null){
+                        val goal = Goal(
+                            id = if (goalId == -1L) 0 else goalId,
+                            title = title,
+                            category = category,
+                            goalType = goalType,
+                            frequency = if (isOneTime) GoalFrequency.ONE_TIME else frequency,
+                            isAutoCompletable = isAutoCompletable,
+                            description = description.takeIf { it.isNotBlank() },
+                            isCompleted = isCompleted,
+                            userId = user.userId
+                        )
+                        if (goalId == -1L) {
+                            viewModel.addGoal(goal)
+                        } else {
+                            viewModel.updateGoal(goal)
+                        }
+                        onNavigateBack()
                     }
-                    onNavigateBack()
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = title.isNotBlank(),

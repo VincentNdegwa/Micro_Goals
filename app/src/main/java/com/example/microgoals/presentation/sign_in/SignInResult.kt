@@ -1,12 +1,9 @@
 package com.example.microgoals.presentation.sign_in
 
+import com.example.microgoals.data.model.User
+
 data class SignInResult(
-    val data: UserData?,
+    val data: User?,
     val errorMessage: String?
 )
 
-data class UserData(
-    val userId: String,
-    val username: String?,
-    val profilePictureUrl: String?
-)
