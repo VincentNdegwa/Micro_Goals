@@ -20,4 +20,4 @@ interface UserDao {
 
     @Query("SELECT * FROM users where isCurrentUser= 1 ORDER BY loggedInAt DESC LIMIT 1")
     fun getActiveUser(): Flow<List<User>>;
-} 
+}

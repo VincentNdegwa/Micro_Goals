@@ -9,7 +9,10 @@ import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-@Entity(tableName = "goals", foreignKeys = [ForeignKey(entity = User::class,["userId"], ["userId"])])
+@Entity(tableName = "goals", foreignKeys = [
+    ForeignKey(entity = User::class,["userId"], ["userId"]),
+    ForeignKey(entity = GoalCustomDay::class,["id"], ["customDaysInterval"])
+])
 @TypeConverters(Converters::class)
 data class Goal(
     @PrimaryKey(autoGenerate = true)
@@ -57,18 +60,22 @@ data class Reminder(
     val isActive: Boolean = true
 )
 
+
 @Entity(
-    foreignKeys = [ForeignKey(
-        entity = Goal::class,
-        parentColumns = ["id"],
-        childColumns = ["goalId"],
-        onDelete = CASCADE
-    )]
+    tableName = "goal_custom_day",
+    foreignKeys = [
+        ForeignKey(
+            entity = User::class,
+            parentColumns = ["id"],
+            childColumns = ["userId"]
+        )
+    ]
 )
 data class GoalCustomDay(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val goalId: Long,  // Links to Goal table
+    val userId: String,
     val dayOfWeek: DayOfWeek // MONDAY, TUESDAY, etc.
 )
 
